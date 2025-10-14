@@ -44,15 +44,18 @@ export default function SignupForm() {
 
 
     return (
-        <form onSubmit={handleSignup} className="flex flex-col space-y-4 bg-grey p-4 rounded-lg shadow max-w-sm mx-auto">
-            <input name="name" placeholder="Name" className="border p-2 rounded" required />
-            <input name="email" type="email" placeholder="Email" className="border p-2 rounded" required />
-            <input name="password" type="password" placeholder="Password" className="border p-2 rounded" required />
-            <button type="submit" className="bg-blue-500 text-white rounded p-2" disabled={loading}>
-                {loading ? "Signing up..." : "Sign Up"}
-            </button>
-            <Link href="/login" className="block bg-blue-500 text-white rounded p-2 text-center">Login</Link>
-            {error && <p className="text-red-500">{error}</p>}
-        </form>
+        <div className="flex items-center justify-center min-h-screen">
+            <form onSubmit={handleSignup} className="flex flex-col text-center space-y-4 bg-grey p-4 rounded-lg shadow max-w-sm mx-auto">
+                <h1>Signup</h1>
+                <input name="name" placeholder="Name" className="border p-2 rounded" required />
+                <input name="email" type="email" placeholder="Email" className="border p-2 rounded" required />
+                <input name="password" type="password" placeholder="Password" className="border p-2 rounded" required />
+                <button type="submit" className="bg-blue-500 text-white rounded p-2" disabled={loading}>
+                    {loading ? "Signing up..." : "Sign Up"}
+                </button>
+                <Link href="/login" className="block bg-blue-500 text-white rounded p-2 text-center">Login</Link>
+                {error && <p className="text-red-500">{error}</p>}
+            </form>
+        </div>
     );
 }

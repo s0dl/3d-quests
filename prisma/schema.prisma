@@ -8,6 +8,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Map {
+  id          String            @id @default(uuid())
+  name        String            @default("WorldMap")
+  description String            @default("The world map of your campaign")
+  link        String
+  campaignId  String
+  campaign    Campaign          @relation(fields: [campaignId], references: [id])
+}
+
+model Campaign {
+  id          String            @id @default(uuid())
+  name        String
+  description String?
+  gmId        Int
+  gm          User              @relation(fields: [gmId], references: [id])
+  members     CampaignMember[]
+  maps        Map[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model CampaignMember {
+  id          String    @id @default(uuid())
+  campaignId  String
+  userId      Int
+  role        Role      @default(PLAYER)
+  joinedAt    DateTime  @default(now())
+
+  campaign    Campaign  @relation(fields: [campaignId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@unique([campaignId, userId])
+}
+
+
+enum Role {
+  GM
+  PLAYER
+}
+
 model User {
   id            Int       @id @default(autoincrement())
   createdAt     DateTime  @default(now())
@@ -18,6 +58,8 @@ model User {
   updatedAt     DateTime  @default(now()) @updatedAt
   accounts      Account[]
   sessions      Session[]
+  campaigns     Campaign[]
+  memberships   CampaignMember[]
 
   @@map("user")
 }

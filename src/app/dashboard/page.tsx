@@ -1,16 +1,10 @@
-"use client"
-import { authClient } from "@/lib/auth-client"
-import { redirect } from "next/navigation"
+import DashboardHome from '@/components/ui/dashboard-home';
 
-export default function DashboardHome() {
-    async function signout() {
-        await authClient.signOut();
-        redirect("/");
-    }
+export default function DashboardPage() {
 
     return (
         <div>
-            <button onClick={signout}><h1>Hello</h1></button>
+            <DashboardHome />
         </div>
     );
 }

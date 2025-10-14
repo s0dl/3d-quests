@@ -1,6 +1,6 @@
 // Need to add dashboard navbar
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
