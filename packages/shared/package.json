@@ -18,6 +18,7 @@
   },
   "type": "module",
   "dependencies": {
+    "jose": "^6.2.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {

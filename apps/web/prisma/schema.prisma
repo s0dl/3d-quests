@@ -21,6 +21,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  campaignMembers CampaignMember[]
 
   @@unique([email])
   @@map("user")
@@ -73,3 +74,44 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
+model Jwks {
+  id         String    @id
+  publicKey  String
+  privateKey String
+  createdAt  DateTime
+  expiresAt  DateTime?
+
+  @@map("jwks")
+}
+
+
+model Campaign {
+  id          String   @id
+  name        String
+  description String?
+  inviteCode  String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  teamMembers CampaignMember[]
+
+  @@index([inviteCode])
+  @@map("campaign") 
+}
+
+model CampaignMember {
+  id         String   @id
+  campaignId String
+  userId     String
+  role       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([userId])
+  @@map("campaign_member")
+}
+

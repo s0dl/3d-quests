@@ -246,8 +246,8 @@
 
 ## Build Order
 
-1. Monorepo scaffold — Turborepo, pnpm workspaces, shared package, Docker Compose
-2. Auth — Better Auth, PostgreSQL schema for users and sessions
+1. ~~Monorepo scaffold — Turborepo, pnpm workspaces, shared package, Docker Compose~~
+2. ~~Auth — Better Auth, PostgreSQL schema for users and sessions~~
 3. Campaign system — create campaign, invite players, roster management
 4. 3D canvas — R3F map builder with real geometry and collision, local state only
 5. Map persistence — save/load maps via Next.js API and PostgreSQL
