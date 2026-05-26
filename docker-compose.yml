@@ -1,0 +1,42 @@
+services:
+  postgres:
+    container_name: "3dquests-postgres"
+    image: postgres:15
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/3dquests/data
+    
+  redis:
+    container_name: "3dquests-redis"
+    image: redis:7
+    ports:
+      - "${REDIS_PORT}:6379"
+
+  redpanda:
+    container_name: "3dquests-redpanda"
+    image: redpandadata/redpanda:latest
+    command:
+      - redpanda
+      - start
+      - --smp 1
+      - --memory 512M
+      - --overprovisioned
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092"
+
+  redpanda-console:
+    container_name: "3dquests-redpanda-console"
+    image: redpandadata/console:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_BROKERS=redpanda:9092
+    depends_on:
+      - redpanda
