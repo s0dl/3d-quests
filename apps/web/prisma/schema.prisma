@@ -21,7 +21,15 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  campaignMembers CampaignMember[]
+  campaigns     CampaignMember[]
+  maps          Map[]
+  assets        Assets[]
+
+  stripeCustomerId   String?   @unique
+  stripePriceId      String?
+  subscriptionStatus StripeSubscriptionStatus?
+  subscriptionTier   StripeSubscriptionTier?
+  subscriptionEndsAt DateTime?
 
   @@unique([email])
   @@map("user")
@@ -85,25 +93,28 @@ model Jwks {
   @@map("jwks")
 }
 
-
 model Campaign {
-  id          String   @id
+  id          String   @id @default(uuid())
   name        String
   description String?
   inviteCode  String   @unique
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  teamMembers CampaignMember[]
+  lastMapId   String?
+  
+  lastMap     Map?     @relation("LastMap", fields: [lastMapId], references: [id], onDelete: SetNull)
 
-  @@index([inviteCode])
+  members     CampaignMember[]
+  maps        Map[]
+
   @@map("campaign") 
 }
 
 model CampaignMember {
-  id         String   @id
+  id         String   @id @default(uuid())
   campaignId String
   userId     String
-  role       String
+  role       CampaignRole
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -112,6 +123,62 @@ model CampaignMember {
 
   @@index([campaignId])
   @@index([userId])
+  @@unique([campaignId, userId])
   @@map("campaign_member")
 }
 
+model Map {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  campaignId  String
+  data        Json
+  ownerId     String
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastMapForCampaigns Campaign[] @relation("LastMap")
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  campaign    Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@map("map")
+}
+
+model Assets {
+  id            String   @id @default(uuid())
+  userId        String?
+  name          String
+  type          AssetType
+  description   String?
+  url           String
+  thumbnailUrl  String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  owner         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("assets")
+}
+
+enum CampaignRole {
+  GM
+  PLAYER
+}
+
+enum AssetType {
+  TOKEN
+  TILE
+  BACKGROUND
+}
+
+
+enum StripeSubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  TRIALING
+}
+
+enum StripeSubscriptionTier {
+  FREE
+  PRO
+}
