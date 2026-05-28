@@ -10,6 +10,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@3d-quests/shared": "workspace:*",
     "@mantine/core": "^9.2.1",
     "@mantine/hooks": "^9.2.1",
     "@mantine/modals": "^9.2.1",
@@ -20,7 +21,9 @@
     "@react-three/fiber": "^9.6.1",
     "@react-three/rapier": "^2.2.0",
     "better-auth": "^1.6.11",
+    "nanoid": "^5.1.11",
     "next": "16.2.6",
+    "pino": "^10.3.1",
     "posthog-js": "^1.376.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
@@ -37,6 +40,7 @@
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "node-mocks-http": "^1.17.2",
     "postcss": "^8.5.15",
     "postcss-preset-mantine": "^1.18.0",
     "typescript": "^5",

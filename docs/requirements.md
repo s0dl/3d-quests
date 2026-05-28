@@ -24,12 +24,14 @@
 ## MVP Features
 
 ### Authentication
+
 - Email/password sign up and login via Better Auth
 - Email verification on registration
 - Password reset via email (Resend)
 - Session management with JWT
 
 ### Campaign System
+
 - GM creates a persistent campaign with a name and description
 - Invite players via shareable campaign invite link or code
 - Players join the campaign roster — membership persists across sessions
@@ -40,6 +42,7 @@
 - Campaign stores saved maps, session history, and player roster
 
 ### 3D Map Builder (GM only)
+
 - 3D canvas powered by React Three Fiber and Drei
 - Real 3D geometry — walls, floors, and terrain are actual meshes with collision, not painted tiles
 - Place, move, rotate, and delete map tiles and terrain objects (walls, pillars, trees, rocks, etc.)
@@ -50,18 +53,21 @@
 - Load a previously saved map into a session
 
 ### Permission Model
+
 - GM controls: place/move/delete all map geometry, place/move all tokens, load maps, end session
 - Player controls: move their own token only, ruler/distance measurement tool, location ping
 - All permission checks enforced server-side on room-server — client UI hides unavailable controls but server is the source of truth
 - Role (GM or player) is stored per campaign membership in PostgreSQL
 
 ### Token System
+
 - Place player and NPC tokens on the map
 - Move tokens in real time — all connected clients see movement live
 - Token ownership — players can only move their own token, GM can move all
 - Token labels (character name)
 
 ### Camera and Visibility
+
 - Default view: top-down orbit camera for all players
 - Occlusion handled naturally by 3D geometry — walls block line of sight without a separate fog of war system
 - Player camera locked to their token's position and perspective in first-person mode (post-MVP)
@@ -69,6 +75,7 @@
 - Lighting — point lights for torches and environmental light sources cast real shadows via 3D geometry
 
 ### Real-Time Sync (room-server)
+
 - WebSocket connection per live session via Socket.IO
 - Sync token position updates to all connected players
 - Sync map geometry changes made by GM during session
@@ -77,6 +84,7 @@
 - Session spun up when GM starts from campaign dashboard, torn down on session end
 
 ### Asset Management
+
 - Default tile, terrain, and token asset library included
 - GM can upload custom 3D assets (GLTF/GLB format)
 - Presigned URL upload flow — client uploads directly to Cloud Storage
@@ -87,6 +95,7 @@
 ## Post-MVP Features
 
 ### Community Maps
+
 - GM can publish a saved map to the community library
 - Browse and search community maps by name, tags, and game system
 - Preview a map before importing
@@ -96,6 +105,7 @@
 - Map files stored in Cloud Storage
 
 ### Notifications (notification-service)
+
 - In-app notifications via Server-Sent Events
 - Notify user when their map receives a rating or comment
 - Notify GM when a player joins their room
@@ -103,12 +113,14 @@
 - Notification read/unread state persisted in PostgreSQL
 
 ### Subscriptions (Stripe)
+
 - Free tier with limited rooms and storage
 - Pro tier ($5-7/month) — unlimited rooms, asset uploads, private maps, higher player limits
 - Stripe Checkout and webhook handling in Next.js API routes
 - Subscription status stored in PostgreSQL
 
 ### First Person Mode
+
 - Player camera attaches to their token at eye level
 - Same world geometry — collision and occlusion already handled, camera change is the only delta
 - Torchlight and darkvision radius limits visibility via point lighting
@@ -116,6 +128,7 @@
 - Top-down remains available as a toggle for players who prefer it
 
 ### Social
+
 - User profiles with published maps and session history
 - Follow other creators
 - Map collections / favourites
@@ -125,27 +138,32 @@
 ## Non-Functional Requirements
 
 ### Performance
+
 - Token movement sync latency under 100ms for sessions under 8 players
 - 3D canvas target 60fps on mid-range hardware
 - Asset delivery via CDN for fast global load times
 
 ### Reliability
+
 - Player disconnect handled gracefully — state preserved in Redis, resync on reconnect
 - Room state persisted to PostgreSQL on session end
 - Sentry error tracking on all services
 
 ### Observability
+
 - Pino structured JSON logging on room-server and community-service
 - Posthog product analytics on web (map creation funnels, session starts, community engagement)
 - GCP Cloud Logging for aggregated log access
 
 ### Security
+
 - All API routes authenticated via Better Auth session
 - Presigned URLs expire after 15 minutes
 - GM-only actions enforced server-side on room-server
 - Input validation via Zod on all WebSocket payloads and API routes
 
 ### Developer Experience
+
 - Monorepo with pnpm workspaces and Turborepo
 - Shared TypeScript types and Zod schemas in packages/shared
 - Docker Compose for local PostgreSQL and Redis
@@ -157,7 +175,7 @@
 ## Tech Stack
 
 | Layer | Choice |
-|---|---|
+| --- | --- |
 | Monorepo | Turborepo + pnpm workspaces |
 | Frontend | Next.js (App Router), React Three Fiber, Drei |
 | Auth | Better Auth |
@@ -181,7 +199,7 @@
 
 ## Monorepo Structure
 
-```
+```bash
 3d-quests/
 ├── apps/
 │   ├── web/                    # Next.js app
