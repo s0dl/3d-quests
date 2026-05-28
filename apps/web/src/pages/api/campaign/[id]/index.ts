@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { allowMethods, sendError } from "@/lib/helpers/api";
-import { requireCampaignAccess } from "@/lib/helpers/auth";
+import { requireUser, requireCampaignAccess } from "@/lib/helpers/auth";
 import { ApiErrorCode } from "@3d-quests/shared/constants";
 import { prisma } from "@/lib/prisma";
 import logger from "@/lib/pino";
@@ -25,10 +25,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             );
         }
 
-        const { userId, member } = await requireCampaignAccess(req, res, id);
-
+        const userId = await requireUser(req, res);
+        
         if (!userId) {
-            logger.info(`Unauthorized access attempt to /api/campaign`);
+            logger.info(`Unauthorized access attempt to /api/campaign/${id}`);
             return;
         }
 
@@ -45,6 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 "Campaign not found"
             );
         }
+
+
+        const member = await requireCampaignAccess(res, id, userId);
 
         if (!member) {
             logger.info({ userId, campaignId: id }, "User does not have access to campaign");

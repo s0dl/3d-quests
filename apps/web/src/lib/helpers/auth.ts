@@ -28,16 +28,10 @@ export async function requireUser(req: NextApiRequest, res: NextApiResponse) {
 }
 
 export async function requireCampaignAccess(
-    req: NextApiRequest, 
     res: NextApiResponse,
     campaignId: string,
+    userId: string
 ) {
-    const userId = await requireUser(req, res);
-
-    if (!userId) {
-        return { userId: null, member: null };
-    }
-
     const member = await prisma.campaignMember.findUnique({
         where: {
             campaignId_userId: {
@@ -57,8 +51,8 @@ export async function requireCampaignAccess(
             "FORBIDDEN",
             "You do not have access to this campaign"
         )
-        return { userId: userId, member: null };
+        return null;
     }
 
-    return { userId: userId, member: member };
+    return member;
 }
