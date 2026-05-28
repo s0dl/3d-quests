@@ -58,7 +58,7 @@
 **Preconditions:**
 
 - Must be signed in
-- Must not be already in the joining campaign
+- Must not be already in the joining campaign, will return `409`
 
 ## Invite Regenerate API - `api/campaign/[id]/invite.ts`
 

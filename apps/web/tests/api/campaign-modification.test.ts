@@ -24,61 +24,63 @@ describe("Campaign Modification API", () => {
         resetMockAuth();
     });
 
-    test("Unauthenticated user should receive 401", async () => {
-        mockNoSession();
+    describe("Error handling", () => {
 
-        let res = await callApi(handler, { method: "GET", query: { id: "campaign-1" } });
-        expect(res.status).toBe(401);
+        test("Unauthenticated user should receive 401", async () => {
+            mockNoSession();
 
-        res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
-        expect(res.status).toBe(401);
+            let res = await callApi(handler, { method: "GET", query: { id: "campaign-1" } });
+            expect(res.status).toBe(401);
 
-        res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
-        expect(res.status).toBe(401);
+            res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
+            expect(res.status).toBe(401);
 
-        expect(mockPrisma.campaign.findUnique).not.toHaveBeenCalled();
-        expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
-        expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
-    });
+            res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
+            expect(res.status).toBe(401);
 
-    test("Unauthorized campaign member should receive 403", async () => {
-        mockSession("user-1");
-
-        mockPrisma.campaign.findUnique.mockResolvedValue({
-            id: "campaign-1"
+            expect(mockPrisma.campaign.findUnique).not.toHaveBeenCalled();
+            expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
+            expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
         });
 
-        mockPrisma.campaignMember.findUnique.mockResolvedValue({
-            userId: "user-1",
-            campaignId: "campaign-1",
-            role: CampaignRole.PLAYER
+        test("Unauthorized campaign member should receive 403", async () => {
+            mockSession("user-1");
+
+            mockPrisma.campaign.findUnique.mockResolvedValue({
+                id: "campaign-1"
+            });
+
+            mockPrisma.campaignMember.findUnique.mockResolvedValue({
+                role: CampaignRole.PLAYER
+            });
+
+            let res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
+            expect(res.status).toBe(403);
+
+            res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
+            expect(res.status).toBe(403);
+
+            expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
+            expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
         });
 
-        let res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
-        expect(res.status).toBe(403);
+        test("Campaign not found should receive 404", async () => {
+            mockSession("user-1");
+            mockPrisma.campaign.findUnique.mockResolvedValue(null);
 
-        res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
-        expect(res.status).toBe(403);
+            let res = await callApi(handler, { method: "GET", query: { id: "campaign-1" } });
+            expect(res.status).toBe(404);
 
-        expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
-        expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
-    })
+            res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
+            expect(res.status).toBe(404);
 
-    test("Campaign not found should receive 404", async () => {
-        mockSession("user-1");
-        mockPrisma.campaign.findUnique.mockResolvedValue(null);
+            res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
+            expect(res.status).toBe(404);
 
-        let res = await callApi(handler, { method: "GET", query: { id: "campaign-1" } });
-        expect(res.status).toBe(404);
+            expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
+            expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
+        });
 
-        res = await callApi(handler, { method: "PUT", query: { id: "campaign-1" }, body: { name: "Updated Campaign" } });
-        expect(res.status).toBe(404);
-
-        res = await callApi(handler, { method: "DELETE", query: { id: "campaign-1" } });
-        expect(res.status).toBe(404);
-
-        expect(mockPrisma.campaign.update).not.toHaveBeenCalled();
-        expect(mockPrisma.campaign.delete).not.toHaveBeenCalled();
     });
 
 

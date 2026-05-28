@@ -9,7 +9,7 @@ import { CampaignRole } from "@prisma/client";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         if (!allowMethods(req.method, ["POST"], res)) {
-            logger.warn({ method: req.method, path: "/api/campaign/[id]" }, "Method not allowed");
+            logger.warn({ method: req.method, path: "/api/campaign/join/[inviteCode]" }, "Method not allowed");
             return;
         }
 
