@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 
 export const mockPrisma = {
+    $transaction: vi.fn(async (callback) => callback(mockPrisma)),
     campaign: {
         findMany: vi.fn(),
         findUnique: vi.fn(),
@@ -32,7 +33,12 @@ export const mockPrisma = {
 }
 
 export function resetMockPrisma() {
-    Object.values(mockPrisma).forEach((model) => {
-        Object.values(model).forEach((fn) => fn.mockReset());
+    Object.values(mockPrisma).forEach((modelOrFn) => {
+        if (typeof modelOrFn === "function" && "mockReset" in modelOrFn) {
+            modelOrFn.mockReset();
+            return;
+        }
+        
+        Object.values(modelOrFn).forEach((fn) => fn.mockReset());
     });
 }
